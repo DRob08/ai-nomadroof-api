@@ -5,6 +5,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from config import settings
 import os
+import requests
 
 router = APIRouter()
 
@@ -45,3 +46,7 @@ def get_booking_insights():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/my-ip")
+def get_ip():
+    return requests.get("https://api.ipify.org?format=json").json()
