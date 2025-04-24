@@ -2,26 +2,32 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import date, datetime
 
-class Booking(BaseModel):
+class BookingmModel(BaseModel):
+    # Booking details
+    post_id: int
     post_date: datetime
     post_title: str
-
-    check_in: str  # Can be changed to `date` if desired
     booking_status: str
+    booking_invoice_no: Optional[str] = None
 
+    # User details
     user_id: int
     user_login: str
-    post_id: int
     first_name: str
     user_email: str
 
+    # Booking dates (stored as strings in DB, but can be changed to `date` if parsed)
+    check_in: str
+    check_out: str
+
+    # Owner details
     owner_id: int
     owner_email: str
-    check_out: str  # Can be changed to `date` if desired
-
-    property_id: int
     owneralias: str
-    property_name: str
+
+    # Property info (can be null if property doesn't exist)
+    property_id: Optional[int] = None
+    property_name: Optional[str] = None
 
     class Config:
         orm_mode = True
