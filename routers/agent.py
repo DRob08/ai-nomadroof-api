@@ -3,8 +3,52 @@ from fastapi import APIRouter, HTTPException
 from routers.bookings import get_bookings
 from services.ai_service import ask_gpt  # 👈 new import
 from services.property_service import get_available_properties  
+from models.property_model import PropertyModel
+from models.insight_request_model import InsightRequest
 
 router = APIRouter()
+
+@router.post("/property-insight")
+def property_insight(request: InsightRequest):
+    try:
+        properties = request.properties
+        question = request.question
+
+        if not properties:
+            return {"answer": "No property data provided."}
+
+        # Format property data
+        formatted = "\n".join([
+            "'{title}' in {state}, {country} — {price}/mo, {rooms} rooms. Amenities: {amenities}".format(
+                title=p.post_title,
+                state=p.property_state or "Unknown",
+                country=p.property_country or "Unknown",
+                price=p.property_price_per_month or p.property_price or "N/A",
+                rooms=p.property_rooms or "N/A",
+                amenities=", ".join(filter(None, [
+                    'Electricity' if p.electricity_included else None,
+                    'Pool' if p.pool else None,
+                    'Gym' if p.gym else None,
+                    'Water' if p.water_included else None,
+                    'Parking' if p.free_parking_on_premises else None,
+                ]))
+            )
+            for p in properties[:30]  # Limit to 30 if needed
+        ])
+
+        messages = [
+            {"role": "system", "content": "You are a helpful real estate analyst."},
+            {"role": "user", "content": (
+                f"Here are property listings:\n\n{formatted}\n\n"
+                f"Now, answer the following question based on this data:\n\n{question}"
+            )}
+        ]
+
+        answer = ask_gpt(messages)
+        return {"answer": answer}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/booking-insights")
 def get_booking_insights():

@@ -17,5 +17,5 @@ app.add_middleware(
 )
 
 app.include_router(bookings.router, prefix="/api")
-app.include_router(agent.router, prefix="/api")
+app.include_router(agent.router, prefix="/api/agent")
 app.include_router(property.router, prefix="/api/property")
