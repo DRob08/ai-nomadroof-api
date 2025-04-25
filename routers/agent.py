@@ -51,7 +51,7 @@ def available_properties_insights():
             return {"insights": "No available property data found."}
 
         formatted = "\n".join([
-            "'{title}' in {state} — {price} USD/night, Type: {size}, Rooms: {rooms}, Amenities: {amenities}".format(
+            "'{title}' in {state} — {price} USD/Monthly, Type: {size}, Rooms: {rooms}, Amenities: {amenities}".format(
                 title=p.post_title,
                 state=p.property_state,
                 price=p.property_price,

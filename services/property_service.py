@@ -2,7 +2,8 @@ from models.property_model import PropertyModel
 from typing import List
 from services.db_service import fetch_all
 
-def get_available_properties(filters: dict) -> List[PropertyModel]:
+#def get_available_properties(filters: dict) -> List[PropertyModel]:
+def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
     query = """
           SELECT 
                 p.post_title,
