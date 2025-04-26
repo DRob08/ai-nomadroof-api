@@ -24,13 +24,21 @@ def property_insight(request: InsightRequest):
                 state=p.property_state or "Unknown",
                 country=p.property_country or "Unknown",
                 price=p.property_price_per_month or p.property_price or "N/A",
-                rooms=p.property_rooms or "N/A",
+                rooms=p.property_bedrooms or "N/A",
+                cancellation_policy = p.cancellation_policy or "N/A",
                 amenities=", ".join(filter(None, [
-                    'Electricity' if p.electricity_included else None,
+                     'Electricity' if p.electricity_included else None,
                     'Pool' if p.pool else None,
-                    'Gym' if p.gym else None,
                     'Water' if p.water_included else None,
+                    'Gym' if p.gym else None,
+                    'Heating' if p.heating else None,
+                    'Hot Tub' if p.hot_tub else None,
+                    'A/C' if p.air_conditioning else None,
                     'Parking' if p.free_parking_on_premises else None,
+                    'Desk' if p.desk else None,
+                    'Hangers' if p.hangers else None,
+                    'Closet' if p.closet else None,
+                    'Iron' if p.iron else None
                 ]))
             )
             for p in properties[:30]  # Limit to 30 if needed
