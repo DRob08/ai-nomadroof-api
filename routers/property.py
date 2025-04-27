@@ -1,11 +1,36 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from services.property_service import get_available_properties
 from models.property_model import PropertyModel
 from typing import List
+from typing import Optional
 
 router = APIRouter()
 
 @router.get("/properties", response_model=List[PropertyModel])
-def list_properties():
-    return get_available_properties()
+def list_properties(
+    city: Optional[str] = Query(None),
+    district: Optional[str] = Query(None),
+    dates: Optional[str] = Query(None),
+    startDate: Optional[str] = Query(None),
+    endDate: Optional[str] = Query(None),
+    priceRange: Optional[str] = Query(None),
+    districtLat: Optional[float] = Query(None),
+    districtLng: Optional[float] = Query(None),
+    minPrice: Optional[float] = Query(None),
+    maxPrice: Optional[float] = Query(None)
+):
+    filters = {
+        "city": city,
+        "district": district,
+        "dates": dates,
+        "startDate": startDate,
+        "endDate": endDate,
+        "priceRange": priceRange,
+        "districtLat": districtLat,
+        "districtLng": districtLng,
+        "minPrie": minPrice,
+        "maxPrice": maxPrice
+        }
+    print(filters)
+    return get_available_properties(filters)
 

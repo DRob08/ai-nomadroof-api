@@ -4,6 +4,7 @@ from services.db_service import fetch_all
 
 #def get_available_properties(filters: dict) -> List[PropertyModel]:
 def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
+    print(filters)
     query = """
           SELECT 
                 p.post_title,
