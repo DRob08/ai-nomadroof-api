@@ -44,7 +44,7 @@ def property_insight(request: InsightRequest):
                 longitude=p.property_longitude or "Unknown",
                 available_days=p.property_available_days or "Unknown"
             )
-            for p in properties[:30]  # Limit to 30 if needed
+            for p in properties[:100]  # Limit to 30 if needed
         ])
 
         messages = [
