@@ -6,9 +6,10 @@ from services.db_service import fetch_all
 def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
     print(filters)
     query = """
-          SELECT 
+         SELECT 
                 p.post_title,
-                past_bookings.prop_id AS past_bookings_ptroperty_id,
+                p.ID as property_id,
+                past_bookings.prop_id AS past_bookings_property_id,
                 p.post_name AS half_property_url,
                 thumbnail.meta_value AS thumbnail_id,
                 CONCAT('https://www.nomadroof.com/wp-content/uploads/', thumbnail_file.meta_value) AS full_thumbnail_url,
@@ -19,6 +20,9 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
                 address.meta_value AS property_address,
                 state.meta_value AS property_state,
                 county.meta_value AS property_county,
+                property_latitude.meta_value AS property_latitude,
+                property_longitude.meta_value AS property_longitude,
+                property_available_days.meta_value AS property_available_days,
               CASE WHEN electricity.meta_value = '1' THEN TRUE ELSE FALSE END AS electricity_included,
                 CASE WHEN pool.meta_value = '1' THEN TRUE ELSE FALSE END AS pool,
                 CASE WHEN water.meta_value = '1' THEN TRUE ELSE FALSE END AS water_included,
@@ -137,9 +141,8 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
                 AND m1.meta_key = 'booking_status'
                 AND m1.meta_value = 'confirmed'
                 AND m2.meta_key = 'booking_from_date'
-AND STR_TO_DATE(m2.meta_value, '%M %d, %Y') >= DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR)
-AND STR_TO_DATE(m2.meta_value, '%M %d, %Y') < CURRENT_DATE
-
+                AND STR_TO_DATE(m2.meta_value, '%M %d, %Y') >= DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR)
+                AND STR_TO_DATE(m2.meta_value, '%M %d, %Y') < CURRENT_DATE
                 AND m3.meta_key = 'owner_id' AND m3.meta_value <> u1.id
                 AND (um.meta_key = 'first_name' AND LENGTH(um.meta_value) > 0)
                 AND m4.meta_key = 'booking_to_date'
@@ -148,41 +151,21 @@ AND STR_TO_DATE(m2.meta_value, '%M %d, %Y') < CURRENT_DATE
             ) AS past_bookings ON p.ID = past_bookings.prop_id
             INNER JOIN wp_users u1 ON p.post_author = u1.ID
             INNER JOIN wp_usermeta um ON u1.ID = um.user_id AND um.meta_key = 'first_name'
+            LEFT JOIN 
+            wp_postmeta property_latitude ON p.ID = property_latitude.post_id AND property_latitude.meta_key = 'property_latitude'
+            LEFT JOIN 
+            wp_postmeta property_longitude ON p.ID = property_longitude.post_id AND property_longitude.meta_key = 'property_longitude'
+            LEFT JOIN 
+            wp_postmeta property_available_days ON p.ID = property_available_days.post_id AND property_available_days.meta_key = 'property_available_days'
             WHERE 
                 p.post_type = 'estate_property' 
                 AND p.post_status = 'publish' 
                 AND global_prop.meta_value = 'NO'
-                AND p.ID NOT IN (
-                   SELECT DISTINCT m5.meta_value AS prop_id
-                    FROM wp_posts
-                    INNER JOIN wp_postmeta m1 ON wp_posts.ID = m1.post_id -- booking_status
-                    INNER JOIN wp_postmeta m2 ON wp_posts.ID = m2.post_id -- booking_from_date
-                    INNER JOIN wp_postmeta m3 ON wp_posts.ID = m3.post_id -- owner_id
-                    INNER JOIN wp_postmeta m4 ON wp_posts.ID = m4.post_id -- booking_to_date
-                    INNER JOIN wp_users u1 ON wp_posts.post_author = u1.ID
-                    INNER JOIN wp_usermeta um ON u1.ID = um.user_id
-                    INNER JOIN wp_users uown ON m3.meta_value = uown.id
-                    INNER JOIN wp_postmeta m5 ON wp_posts.ID = m5.post_id -- booking_id (prop_id)
-                    INNER JOIN wp_posts b ON m5.meta_value = b.ID -- actual property post
-                    INNER JOIN wp_postmeta m6 ON wp_posts.ID = m6.post_id -- booking_invoice_no
-                    WHERE wp_posts.post_type = 'wpestate_booking'
-                      AND wp_posts.post_status = 'publish'
-                      AND m1.meta_key = 'booking_status' AND m1.meta_value = 'confirmed'
-                      AND m2.meta_key = 'booking_from_date'
-                      AND m4.meta_key = 'booking_to_date'
-                      AND (
-                        -- Overlaps with today or is in the next year
-                        STR_TO_DATE(m4.meta_value, '%M %d, %Y') >= CURDATE() -- ends today or later
-                        AND STR_TO_DATE(m2.meta_value, '%M %d, %Y') <= CURDATE() + INTERVAL 1 YEAR -- starts within a year
-                      )
-                      AND m3.meta_key = 'owner_id' AND m3.meta_value <> u1.id
-                      AND (um.meta_key = 'first_name' AND LENGTH(um.meta_value) > 0)
-                      AND m5.meta_key = 'booking_id'
-                      AND m6.meta_key = 'booking_invoice_no'
-                )
+              
                 AND country.meta_value = 'Peru'
                 AND past_bookings.prop_id IS NOT NULL
-            ORDER BY p.post_title ASC;
+            ORDER BY p.post_title ASC
+            ;
             """ # The giant query you pasted
     results = fetch_all(query)
     return [PropertyModel(**row) for row in results]

@@ -39,7 +39,10 @@ def property_insight(request: InsightRequest):
                     'Hangers' if p.hangers else None,
                     'Closet' if p.closet else None,
                     'Iron' if p.iron else None
-                ]))
+                ])),
+                latitude=p.property_latitude or "Unknown",
+                longitude=p.property_longitude or "Unknown",
+                available_days=p.property_available_days or "Unknown"
             )
             for p in properties[:30]  # Limit to 30 if needed
         ])
