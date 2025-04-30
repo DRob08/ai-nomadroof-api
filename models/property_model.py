@@ -16,6 +16,7 @@ class PropertyModel(BaseModel):
     property_latitude: Optional[str]
     property_longitude: Optional[str]
     property_available_days: Optional[str]
+    property_booking_dates: Optional[str]
     guest_no: Optional[str]
     property_price: Optional[str]
     property_price_per_month: Optional[str]

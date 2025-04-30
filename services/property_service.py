@@ -50,7 +50,7 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
                 admin_area.meta_value AS property_admin_area,
                 u1.display_name AS owner_name,
                 um.meta_value AS owner_first_name,
-
+                booking_dates.meta_value AS property_booking_dates,
                 CASE
                     WHEN LOCATE('SPANISH', bedroom_descr.meta_value) > 0 THEN 
                         SUBSTRING(bedroom_descr.meta_value, 1, LOCATE('SPANISH', bedroom_descr.meta_value) - 1)
@@ -123,6 +123,7 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
                 wp_postmeta admin_area ON p.ID = admin_area.post_id AND admin_area.meta_key = 'property_admin_area'
             LEFT JOIN 
                 wp_postmeta global_prop ON p.ID = global_prop.post_id AND global_prop.meta_key = 'global_prop'
+            LEFT JOIN wp_postmeta booking_dates ON p.ID = booking_dates.post_id AND booking_dates.meta_key = 'booking_dates'
             LEFT JOIN (
                 SELECT DISTINCT m5.meta_value AS prop_id
                 FROM wp_posts
