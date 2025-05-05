@@ -112,6 +112,7 @@ def available_properties_insights():
                 price=p.property_price,
                 size=p.property_size,
                 rooms=p.property_rooms,
+                property_address=p.property_address,
                 amenities=", ".join(filter(None, [
                     'Electricity' if p.electricity_included else None,
                     'Pool' if p.pool else None,

@@ -28,7 +28,7 @@ def list_properties(
         "priceRange": priceRange,
         "districtLat": districtLat,
         "districtLng": districtLng,
-        "minPrie": minPrice,
+        "minPrice": minPrice,
         "maxPrice": maxPrice
         }
     print(filters)
