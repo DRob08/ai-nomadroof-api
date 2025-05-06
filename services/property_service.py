@@ -71,10 +71,12 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
         AND booking_status_meta.meta_value = 'confirmed'
         
         AND booking_property_meta.meta_value = p.ID
-        AND (
-            STR_TO_DATE(booking_start_meta.meta_value, '%M %d, %Y') <= STR_TO_DATE('{end_date}', '%Y-%m-%d')
-            AND STR_TO_DATE(booking_end_meta.meta_value, '%M %d, %Y') >= STR_TO_DATE('{start_date}', '%Y-%m-%d')
-        )
+      AND (
+    STR_TO_DATE(booking_start_meta.meta_value, '%b %d, %Y') <= '{end_date}'
+    AND STR_TO_DATE(booking_end_meta.meta_value, '%b %d, %Y') >= '{start_date}'
+)
+
+
 )
 
         """
@@ -202,11 +204,13 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
         {price_conditions}
         {location_condition}
          {district_condition}
-    ORDER BY p.post_title ASC;
+    ORDER BY 
+    CAST(prop_featured.meta_value AS UNSIGNED) DESC,
+    p.post_title ASC;
     """
     
     # Print the final query for debugging purposes
-    #print(query)
+    print(query)
 
     # Fetch all results from the database
     results = fetch_all(query)
