@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query
-from services.property_service import get_available_properties
+from services.property_service import get_available_properties, get_exclusive_properties
 from models.property_model import PropertyModel
 from typing import List
 from typing import Optional
@@ -33,4 +33,8 @@ def list_properties(
         }
     print(filters)
     return get_available_properties(filters)
+
+@router.get("/exclusive-properties", response_model=List[PropertyModel])
+def list_exclusive_properties():
+    return get_exclusive_properties()
 

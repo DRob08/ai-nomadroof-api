@@ -10,8 +10,8 @@ class PropertyModel(BaseModel):
     property_bedrooms: Optional[str]
     property_bathrooms: Optional[str]
     property_address: Optional[str]
+    property_district: Optional[str] = None  # Default value makes it optional
     property_state: Optional[str]
-    property_county: Optional[str]
     property_country: Optional[str]
     property_latitude: Optional[str]
     property_longitude: Optional[str]
@@ -41,3 +41,4 @@ class PropertyModel(BaseModel):
     hangers: Optional[bool]
     closet: Optional[bool]
     iron: Optional[bool]
+    is_prop_featured: Optional[bool]
