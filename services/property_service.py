@@ -26,7 +26,9 @@ def is_property_available(property_data, start_date, end_date):
     print(f"Received start_date: {start_date}, end_date: {end_date}")
 
     avail_days_raw = property_data.get("property_available_days")
-    print(f"Raw availability data: {avail_days_raw}")
+    prop_name = property_data.get("post_title")
+    print(prop_name)
+    #print(f"Raw availability data: {avail_days_raw}")
     if not avail_days_raw:
         print("No availability data found.")
         return False
@@ -41,7 +43,7 @@ def is_property_available(property_data, start_date, end_date):
     if data.get("unlimited") == "yes":
         print("Unlimited availability detected.")
         start_str = data.get("start")
-        print(f"Start limit string from data: {start_str}")
+        #print(f"Start limit string from data: {start_str}")
         if not start_str:
             print("Start limit is missing.")
             return False
@@ -56,7 +58,12 @@ def is_property_available(property_data, start_date, end_date):
             print(f"Date parsing error: {e}")
             return False
 
-        result = start_dt >= start_limit and end_dt >= start_limit
+        #result = start_dt >= start_limit and end_dt >= start_limit
+        result = start_dt <= start_limit <= end_dt
+
+        gap_days = (start_limit - start_dt).days
+        result = 0 <= gap_days <= 7
+
         print(f"Availability result: {result}")
         return result
 
@@ -306,6 +313,8 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
 
     # Fetch all results from the database
     results = fetch_all(query)
+
+    print(results)
 
     filtered_results = [
         prop for prop in results
