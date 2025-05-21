@@ -59,11 +59,10 @@ def is_property_available(property_data, start_date, end_date):
             return False
 
         #result = start_dt >= start_limit and end_dt >= start_limit
-        result = start_dt <= start_limit <= end_dt
+        gap_days = (start_dt - start_limit).days
+        result = gap_days >= -7
 
-        gap_days = (start_limit - start_dt).days
-        result = 0 <= gap_days <= 7
-
+        print(f"Gap days from start_dt to start_limit: {gap_days}")
         print(f"Availability result: {result}")
         return result
 
