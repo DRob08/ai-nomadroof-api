@@ -5,11 +5,34 @@ from services.ai_service import ask_gpt  # 👈 new import
 from services.property_service import get_available_properties  
 from models.property_model import PropertyModel
 from models.insight_request_model import InsightRequest
+from services.faq_service import find_answer_from_faq
 import math
-
+from utils.property_utils import properties_near_universities, get_university_summary
+import json
+import os
 router = APIRouter()
 
-PUCP_COORDS = (-12.0685, -77.0796)  # Coordinates for PUCP in Lima
+#PUCP_COORDS = (-12.0685, -77.0796)  # Coordinates for PUCP in Lima
+
+# UNIVERSITIES_IN_LIMA = {
+#     "PUCP": (-12.0685, -77.0796),
+#     "Universidad de Lima": (-12.0870, -76.9717),
+#     "Universidad Nacional Mayor de San Marcos": (-12.0586, -77.0793),
+#     "UPC Monterrico": (-12.1152, -76.9731),
+#     "Universidad del Pacífico": (-12.0891, -77.0365)
+# }
+
+# SENSITIVE_KEYWORDS = [
+#     "address", "exact location", "coordinates", "latitude", "longitude", "who owns", "who rented",
+#     "email", "phone", "personal info", "owner name", "contact info"
+# ]
+
+universities_in_lima = json.loads(os.getenv("UNIVERSITIES_IN_LIMA", "{}"))
+sensitive_keywords = json.loads(os.getenv("SENSITIVE_KEYWORDS", "[]"))
+
+def is_sensitive_question(question: str) -> bool:
+    lowered = question.lower()
+    return any(keyword in lowered for keyword in sensitive_keywords)
 
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371  # Earth radius in km
@@ -22,6 +45,26 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
     return R * c
+
+# def properties_near_universities(properties, university_coords, radius_km=5.0):
+#     results = {}
+#     for name, coords in university_coords.items():
+#         nearby = []
+#         for p in properties:
+#             try:
+#                 lat = float(p.property_latitude)
+#                 lon = float(p.property_longitude)
+#                 distance = haversine(lat, lon, coords[0], coords[1])
+#                 if distance <= radius_km:
+#                     nearby.append((p, round(distance, 2)))
+#             except (TypeError, ValueError):
+#                 continue
+#         results[name] = nearby
+#     return results
+
+def is_true(val):
+    return str(val).strip().lower() in ("true", "1", "yes")
+
 
 def properties_near_location(properties, target_coords, radius_km=5.0):
     nearby = []
@@ -46,13 +89,31 @@ def property_insight(request: InsightRequest):
 
         if not properties:
             return {"answer": "No property data provided."}
+        
+        # Check for sensitive content
+        if is_sensitive_question(question):
+            return {"answer": "Your question contains sensitive content and cannot be processed."}
+        
+         # Try to answer using the FAQ first
+        faq_answer = find_answer_from_faq(question)
+        if faq_answer:
+            return {"answer": faq_answer}
 
         # Identify properties close to PUCP (within 5 km)
-        nearby_pucp = properties_near_location(properties, PUCP_COORDS, radius_km=10.0)
-        near_summary = f"{len(nearby_pucp)} properties are located within 5km of PUCP."
+        #nearby_pucp = properties_near_location(properties, PUCP_COORDS, radius_km=10.0)
+        #near_summary = f"{len(nearby_pucp)} properties are located within 5km of PUCP."
+
+        # Identify properties close to major Lima universities (within 5km)
+        universities_proximity = properties_near_universities(properties, universities_in_lima, radius_km=10.0)
+        near_summary = get_university_summary(universities_proximity, 10.0)
+
+        # near_summary_lines = []
+        # for uni_name, nearby_props in universities_proximity.items():
+        #     near_summary_lines.append(f"{len(nearby_props)} properties are within 10km of {uni_name}.")
+        # near_summary = "\n".join(near_summary_lines)
 
         formatted_lines = []
-        for p in properties[:100]:
+        for p in properties[:15]:
             district = (p.property_district or "").strip().title() or "N/A"
             city = (p.property_state or "").strip().title() or "Lima"
             country = (p.property_country or "").strip().title() or "Peru"
@@ -60,7 +121,8 @@ def property_insight(request: InsightRequest):
             formatted_line = (
                 "'{title}' in {district}, {city}, {country} — {price}/mo, "
                 "{rooms} rooms, Cancellation: {cancellation}. "
-                "Available for: {available_days} days. Amenities: {amenities}"
+                "Amenities: {amenities}"
+                "View Listing: https://www.nomadroof.com/properties/{url}"
             ).format(
                 title=p.post_title,
                 district=district,
@@ -69,7 +131,9 @@ def property_insight(request: InsightRequest):
                 price=p.property_price_per_month or p.property_price or "N/A",
                 rooms=p.property_bedrooms or "N/A",
                 cancellation=p.cancellation_policy or "N/A",
+     
                 available_days=p.property_available_days or "N/A",
+                
                 amenities=", ".join(filter(None, [
                     'Electricity' if p.electricity_included else None,
                     'Pool' if p.pool else None,
@@ -83,27 +147,159 @@ def property_insight(request: InsightRequest):
                     'Hangers' if p.hangers else None,
                     'Closet' if p.closet else None,
                     'Iron' if p.iron else None
-                ]))
+                ])),
+                url=p.half_property_url or ""
+                
             )
             formatted_lines.append(formatted_line)
 
         formatted = "\n".join(formatted_lines)
 
-        messages = [
-            {"role": "system", "content": (
-                "You are a helpful real estate analyst. "
-                "Do not repeat or expose any exact addresses or geographic coordinates. "
-                "Summarize based on city, district, amenities, and pricing only."
-            )},
-            {"role": "user", "content": (
-                f"Here are property listings:\n\n{formatted}\n\n"
-                f"Additional info: {near_summary}\n\n"
-                f"Now, answer the following question based on this data:\n\n{question}"
-            )}
+
+        formatted_properties = []
+
+        for p in properties[:15]:
+            district = (p.property_district or "").strip().title() or "N/A"
+            city = (p.property_state or "").strip().title() or "Lima"
+            country = (p.property_country or "").strip().title() or "Peru"
+
+            amenities = list(filter(None, [
+                'Electricity' if is_true(p.electricity_included) else None,
+                'Pool' if is_true(p.pool) else None,
+                'Water' if is_true(p.water_included) else None,
+                'Gym' if is_true(p.gym) else None,
+                'Heating' if is_true(p.heating) else None,
+                'Hot Tub' if is_true(p.hot_tub) else None,
+                'A/C' if is_true(p.air_conditioning) else None,
+                'Parking' if is_true(p.free_parking_on_premises) else None,
+                'Desk' if is_true(p.desk) else None,
+                'Hangers' if is_true(p.hangers) else None,
+                'Closet' if is_true(p.closet) else None,
+                'Iron' if is_true(p.iron) else None
+            ]))
+
+            formatted_properties.append({
+                "title": p.post_title or "N/A",
+                "location": f"{district}, {city}, {country}",
+                "price": p.property_price_per_month or p.property_price or "N/A",
+                "rooms": p.property_bedrooms or "N/A",
+                "cancellation_policy": p.cancellation_policy or "N/A",
+    
+                "amenities": amenities,
+                "view_link": f"https://www.nomadroof.com/properties/{p.half_property_url or ''}"
+            })
+
+        # messages = [
+        #     {
+        #         "role": "system",
+        #         "content": (
+        #             "You are a real estate analyst. NEVER mention or infer personal data, exact addresses, coordinates, or individual identities. "
+        #             "Only give generalized, anonymized insights using cities, districts, prices, and amenities. "
+        #             "If referencing or listing any specific property, you must always include the full property info line exactly as provided, including the View Listing link."
+        #         )
+        #     },
+        #     {
+        #         "role": "user",
+        #         "content": (
+        #             f"Below is a list of property listings. Each includes location, price, availability, amenities, and a 'View Listing' URL.\n\n"
+        #             f"IMPORTANT: When referencing properties in your answer, copy and paste the **full line** exactly, including the View Listing URL.\n\n"
+        #             f"--- PROPERTY LISTINGS START ---\n\n"
+        #             f"{formatted}\n\n"
+        #             f"--- PROPERTY LISTINGS END ---\n\n"
+        #             f"Nearby university info: {near_summary}\n\n"
+        #             f"Now, based only on this data, answer the following user question:\n\n{question}"
+        #         )
+        #     }
+        # ]
+
+  
+
+        # messages = [
+        #     {
+        #         "role": "system",
+        #         "content": (
+        #             "You are a real estate analyst. NEVER mention or infer personal data, exact addresses, coordinates, or individual identities. "
+        #             "Only give generalized, anonymized insights using cities, districts, prices, and amenities."
+        #         )
+        #     },
+        #     {
+        #         "role": "user",
+        #         "content": (
+        #             f"Below is a JSON array of standardized property listings.\n\n"
+        #             f"{json.dumps(formatted_properties, indent=2)}\n\n"
+        #             f"Nearby university info: {near_summary}\n\n"
+        #             f"IMPORTANT:\n"
+        #             "- If the question requires you to return a list of properties matching criteria (e.g. listings with pools or gyms), "
+        #             "then reply ONLY with a valid JSON array of objects with keys:\n"
+        #             "  title, location, price, rooms, cancellation_policy, amenities, view_link\n"
+        #             "- Include all matching properties; if none match, return an empty array.\n"
+        #             "- For other questions, answer in plain text.\n\n"
+        #             f"Now answer this question based ONLY on the data above:\n\n{question}"
+        #         )
+        #     }
+        # ]
+
+            messages = [
+            {
+                "role": "system",
+                "content": (
+                    "You are a real estate analyst. NEVER mention or infer personal data, exact addresses, coordinates, or individual identities. "
+                    "Only give generalized, anonymized insights using cities, districts, prices, and amenities."
+                )
+            },
+            {
+                "role": "user",
+                "content": (
+                    f"Below is a JSON array of standardized property listings.\n\n"
+                    f"{json.dumps(formatted_properties, indent=2)}\n\n"
+                    f"Nearby university info: {near_summary}\n\n"
+                    f"IMPORTANT:\n"
+                    "- If the question requires you to return a list of properties matching criteria (e.g. listings with pools or gyms), "
+                    "then reply ONLY with a valid JSON array of objects with keys:\n"
+                    "  title, location, price, rooms, cancellation_policy, amenities, view_link\n"
+                    "- Include all matching properties; if none match, return an empty array.\n"
+                    "- For other questions, answer in plain text.\n\n"
+                    f"Now answer this question based ONLY on the data above:\n\n{question}"
+                )
+            }
         ]
 
+        #print(formatted_properties)
         answer = ask_gpt(messages)
-        return {"answer": answer}
+        #return {"answer": answer}
+        #print(answer)
+        print(json.dumps(answer, indent=2, ensure_ascii=False))
+        # Step 2: Try to parse the response as a list
+        try:
+            filtered_properties = json.loads(answer)
+            print(filtered_properties)
+            if isinstance(filtered_properties, list):
+                return {
+                    "answer": "Filtered property list based on user query.",
+                    "filtered_properties": filtered_properties,
+                    "university_proximity": {
+                        uni: [dict(
+                            post_title=p.post_title,
+                            distance_km=dist
+                        ) for p, dist in prop_list]
+                        for uni, prop_list in universities_proximity.items()
+                    }
+                }
+        except json.JSONDecodeError:
+            pass  # Not a JSON array — fallback to text response
+
+        # Step 3: Fallback plain answer
+        return {
+            "answer": answer,
+            "university_proximity": {
+                uni: [dict(
+                    post_title=p.post_title,
+                    distance_km=dist
+                ) for p, dist in prop_list]
+                for uni, prop_list in universities_proximity.items()
+            }
+        }
+
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -304,7 +304,8 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
    
     ORDER BY 
     CAST(prop_featured.meta_value AS UNSIGNED) DESC,
-    p.post_title ASC;
+    p.post_title ASC
+    LIMIT 20;
     """
     
     # Print the final query for debugging purposes
@@ -313,7 +314,7 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
     # Fetch all results from the database
     results = fetch_all(query)
 
-    print(results)
+    #print(results)
 
     filtered_results = [
         prop for prop in results

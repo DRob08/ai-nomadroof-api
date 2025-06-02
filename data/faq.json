@@ -1,0 +1,175 @@
+[
+    {
+      "question": "How do I list my property on Nomadroof?",
+      "answer": "To list your property, sign up as a host on Nomadroof, complete your profile, and follow the prompts to add your property details, including photos, pricing, and availability."
+    },
+    {
+      "question": "What are the requirements for hosting on Nomadroof?",
+      "answer": "Hosts are expected to provide accurate property information, maintain cleanliness and safety standards, and respond promptly to tenant inquiries."
+    },
+    {
+      "question": "How does the booking process work for hosts?",
+      "answer": "Once a tenant requests a booking, you'll receive a notification to accept or decline. Upon acceptance, the booking is confirmed, and you'll receive the payment according to Nomadroof's payout schedule."
+    },
+   
+    {
+        "question": "What is Nomadroof?",
+        "answer": "Nomadroof is an online platform for students, travellers, professionals, or expats looking for mid-to long-term housing oversees or in different cities of their countries. Our goal is to excel and make easier all the steps of finding and booking a place to live, all this conveniently made online without wasting time."
+      },
+   
+      {
+        "question": "How do you advertise my property?",
+        "answer": "We promote our platform oversees through different advertising tools and social media methods. Your property will have higher visibility from international tenants that you have trouble reaching."
+      },
+      {
+        "question": "How can I create an account?",
+        "answer": "Click on the + Sign Up tab located in the top right side of the website. Sign up via Facebook, Gmail or create a username by providing your email address. If you choose the last option, you will be emailed a temporary password to access your new account."
+      },
+      {
+        "question": "How do I update my contact information?",
+        "answer": "You first need to log in to your account. Once logged in, go to your “Dashboard” and click on “My Profile”. There, you will be able to update your contact information."
+      },
+      {
+        "question": "What information in my profile is public?",
+        "answer": "Only your first name that you include in your profile is public. The other personal information in your profile will only be visible to Nomadroof. Once a booking and payment is confirmed, we will share your name, email address and phone number with the tenant."
+      },
+      {
+        "question": "How do I change my password?",
+        "answer": "Go to your Dashboard and click on “My Profile” settings. Scroll down and you will be able to see the options to change your password."
+      },
+      {
+        "question": "I forgot my password. How do I restore it?",
+        "answer": "Please contact us at customesupport@nomadroof.com so we can help you out."
+      },
+      {
+        "question": "How do I access my Dashboard?",
+        "answer": "Once you have signed up or logged in, you will be redirected to your Dashboard. You can also access your Dashboard by clicking on your profile picture, located in the top right corner of the website."
+      },
+      {
+        "question": "Why is very important to add my phone number and email for a Landlord?",
+        "answer": "It is very important to add your phone number and a correct email address in “My Profile” settings, because we will contact you to start with the verification process."
+      },
+      {
+        "question": "What is Nomadroof?",
+        "answer": "Nomadroof is an online platform for students, travellers, professionals, or expats looking for mid-to long-term housing oversees or in different cities of their countries. Our goal is to excel and make easier all the steps of finding and booking a place to live, all this conveniently made online without wasting time."
+      },
+      {
+        "question": "How can I create an account?",
+        "answer": "Click on the + Sign Up tab located in the upper right side of the website. Sign up via Facebook, Gmail or create a username by providing your email address. If you choose the last option, you will be emailed a temporary password to access your new account."
+      },
+      {
+        "question": "How do I update my profile and other settings?",
+        "answer": "To update your profile and other settings you need to log in to your account and go to your “Dashboard”."
+      },
+      {
+        "question": "What information in my profile is public?",
+        "answer": "Only the information that you include in your profile is public. Your “Personal information” will only be visible to nomadroof. Once a booking and payment is confirmed, we will share your name, email address and phone number with the tenant."
+      },
+      {
+        "question": "How do I change my password?",
+        "answer": "Go to your Dashboard and click on “Mi Profile” settings. Scroll down and you will be able to see the options to change your password."
+      },
+      {
+        "question": "What is the minimum duration of my stay?",
+        "answer": "The minimum duration of stay is 1 month, but you can book a property for less than that time if you agree on that with Landlord. You will still need to pay the total amount of first month’s rent through Nomadroof."
+      },
+      {
+        "question": "How do I apply filters to my search?",
+        "answer": "Type the city you want to move and select your check-in and check-out dates, and number of tenants that will take the property. Click on search and you will be redirected to all the listings available. Over there, you will be able to narrow down your search by applying filters such as number of rooms, bedrooms or baths, type and size of property, and price range. If you click on “More Options”, you will be able to apply the amenities you are looking on a property."
+      },
+      {
+        "question": "Can I schedule a physical visit to a potential property?",
+        "answer": "Nomadroof is a fully online service, therefore it is not necessary to schedule a physical visit to a property. Most people that use Nomadroof are looking for accommodation in a different country and at our platform you will find accurate and detail information from verified listings that you can trust."
+      },
+      {
+        "question": "How do I message Host?",
+        "answer": "You can only message a Host once a booking is confirmed."
+      },
+      {
+        "question": "Where do I find my conversation with Hosts?",
+        "answer": "After booking is confirmed, you will be able to chat directly with Host. You can find your conversations in “My Inbox”, located in your dashboard. You will also received notifications of new messages by email."
+      },
+      {
+        "question": "Is it safe to book with Nomadroof?",
+        "answer": "Yes, our online platform is safe to book as the rooms, apartments and house are verified. We guarantee that you will move in to the exact place you saw online or we get you a full refund."
+      },
+      {
+        "question": "How do I make a booking?",
+        "answer": [
+          "First create an account.",
+          "Choose your room or entire apartment/house, and select your move-in and move-out dates. You can adjust the filters for price, type of property, number of bedrooms or bathroom, and amenities.",
+          "Send us an email or chat with us if you have additional questions regarding a listing. Feel free to ask as many questions as you have as we will forward your requests and questions to Host.",
+          "Send a booking request by clicking on “Request to Book” once you feel you find the property you want to move in.",
+          "Wait for Host’s confirmation as he/she will have 48 hours to accept or reject your booking request.",
+          "Make the payment of the invoice you will receive once your booking request is accepted.",
+          "Receive a confirmation email of your booking been accepted. You’ll also be given the host’s contact details to discuss further details directly with him/her."
+        ]
+      },
+      {
+        "question": "How long does it takes to get a respond from my booking request?",
+        "answer": "We contact the landlord as soon as we receive your reservation but the landlord has 48 business hours to respond to your request. Once a decision is made, you will receive an email immediately."
+      },
+      {
+        "question": "What happens when the Host accepts my booking request?",
+        "answer": "Once the host accepts your booking request, you will be sent an invoice. Go to your Dashboard and click on “My Reservations”. You will be able to see the Invoice on the property listing. Click on the green tab “Invoice Created-Check & Pay” to see the details, and make the payment to secure your place."
+      },
+      {
+        "question": "What happens if my booking request is declined or it expires?",
+        "answer": [
+          "If a landlord declines your booking request, we will send you an email right away.",
+          "If your booking request expires, because Landlord has not replied to your request within the 48 hours period, then your booking request gets canceled. Either way, we have many other amazing properties’ listings you can check out. We recommend you to message as many Landlords as you need so you end up getting the right place to move in."
+        ]
+      },
+      {
+        "question": "What are the payment methods?",
+        "answer": [
+          "Paypal.",
+          "Debit or credit card."
+        ]
+      },
+      {
+        "question": "What am I paying once my booking request is accepted?",
+        "answer": "You are paying the first month’s rent for Host and our booking service fee which is a percentage (15%-23%) of the first month’s rent. We will transfer your first month’s rent to Host, 24 business hours after you move in. Afterwards, you will have to pay the monthly rent and any other payment directly to Host."
+      },
+      {
+        "question": "What is the service fee?",
+        "answer": "The service fee is a percentage amount of the first month’s rent that we charge in order to keep our platform operational and secure, and provide you with an excellent customer service. The service fee percentage varies depending on the city you are moving in to and it ranges from 15% to 23%. You can see the amount of the service fee when you select your staying dates in a property listing."
+      },
+      {
+        "question": "It is safe to make a payment in Nomadroof’s Platform?",
+        "answer": "Making a payment in our platform is completely safe as it has a secure encrypted payment system. We hold the transfer of your first month’s rent to Host and we only disburse it 48 hours after you move in so you have time to let us know if everything is fine. If Host cancels the booking, you will get your money back."
+      },
+      {
+        "question": "What happens if I need to change the dates of my booking?",
+        "answer": "Please send us an email to customersupport@nomadroof.com. We do not guarantee that Host will accept your new dates. If Host declines the new dates, your booking is cancelled and it might incur a penalty fee depending on the date it was cancelled and the reasons. Please see cancellation policies."
+      },
+      {
+        "question": "What is the currency you use?",
+        "answer": "The price of property listings set up in US Dollars. In most banks (and Paypal) you have the option to pay in a different currency. In this case you would be able to pay the exact amount needed and your bank would charge you the corresponding amount in your currency. The remaining renting months and extra payments that you discussed with Landlord are paid outside of the platform. So you should agree on the currency you will use and how they will be paid."
+      },
+      {
+        "question": "What is the security deposit? Do I have to pay it in Nomadroof's platform?",
+        "answer": "The security deposit is the amount you have to pay when you move in and it serves to cover any potential damages that may occur during your stay. Landlord may also keep the security deposit if you leave earlier. If no damages occur, and you leave on the agreed move-out date, the deposit should be refunded. The security deposit amount you see in the listing is used for information purposes and it is not included in the payments you make through Nomadroof’s platform. You will have to pay the security deposit directly to Landlord in the way you both agreed on."
+      },
+      {
+        "question": "Can I cancel my booking?",
+        "answer": "Yes, you can cancel your booking. However, cancellation policies apply based on the timing and reason for cancellation. Please review the cancellation terms listed in the property listing or contact customer support for details."
+      },
+      {
+        "question": "Will I get a refund if I cancel?",
+        "answer": "Refunds depend on the cancellation policy associated with the property. If your cancellation falls within the refund period, you may be eligible for a full or partial refund. Otherwise, penalties may apply."
+      },
+      {
+        "question": "What if the Host cancels my booking?",
+        "answer": "If the Host cancels your booking, you will receive a full refund. Our platform ensures that your payment is held securely and only released 48 hours after your move-in date, giving you time to confirm everything is fine."
+      },
+      {
+        "question": "How do I request a refund?",
+        "answer": "Please email our support team at customersupport@nomadroof.com with the details of your booking and the reason for your refund request. We will process your request in accordance with our cancellation and refund policies."
+      },
+      {
+        "question": "What is the refund process timeline?",
+        "answer": "Once your refund is approved, the process usually takes 5–10 business days to reflect in your original method of payment, depending on your bank or payment provider."
+      }
+  ]
+  
