@@ -42,3 +42,4 @@ class PropertyModel(BaseModel):
     closet: Optional[bool]
     iron: Optional[bool]
     is_prop_featured: Optional[bool]
+    washer: Optional[bool]

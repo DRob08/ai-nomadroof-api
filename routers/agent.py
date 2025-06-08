@@ -112,29 +112,99 @@ def property_insight(request: InsightRequest):
         #     near_summary_lines.append(f"{len(nearby_props)} properties are within 10km of {uni_name}.")
         # near_summary = "\n".join(near_summary_lines)
 
+        # formatted_lines = []
+        # for p in properties[:15]:
+        #     district = (p.property_district or "").strip().title() or "N/A"
+        #     city = (p.property_state or "").strip().title() or "Lima"
+        #     country = (p.property_country or "").strip().title() or "Peru"
+
+        #     formatted_line = (
+        #         "'{title}' in {district}, {city}, {country} — {price}/mo, "
+        #         "{rooms} rooms, Cancellation: {cancellation}. "
+        #         "Amenities: {amenities}"
+        #         "View Listing: https://www.nomadroof.com/properties/{url}"
+        #     ).format(
+        #         title=p.post_title,
+        #         district=district,
+        #         city=city,
+        #         country=country,
+        #         price=p.property_price_per_month or p.property_price or "N/A",
+        #         rooms=p.property_bedrooms or "N/A",
+        #         cancellation=p.cancellation_policy or "N/A",
+     
+        #         available_days=p.property_available_days or "N/A",
+                
+        #         amenities=", ".join(filter(None, [
+        #             'Electricity' if p.electricity_included else None,
+        #             'Pool' if p.pool else None,
+        #             'Water' if p.water_included else None,
+        #             'Gym' if p.gym else None,
+        #             'Heating' if p.heating else None,
+        #             'Hot Tub' if p.hot_tub else None,
+        #             'A/C' if p.air_conditioning else None,
+        #             'Parking' if p.free_parking_on_premises else None,
+        #             'Desk' if p.desk else None,
+        #             'Hangers' if p.hangers else None,
+        #             'Closet' if p.closet else None,
+        #             'Iron' if p.iron else None
+        #         ])),
+        #         url=p.half_property_url or ""
+                
+        #     )
+        #     formatted_lines.append(formatted_line)
+
+        # formatted = "\n".join(formatted_lines)
+
         formatted_lines = []
         for p in properties[:15]:
             district = (p.property_district or "").strip().title() or "N/A"
             city = (p.property_state or "").strip().title() or "Lima"
             country = (p.property_country or "").strip().title() or "Peru"
 
+            amenities = ", ".join(filter(None, [
+                'Electricity' if p.electricity_included else None,
+                'Pool' if p.pool else None,
+                'Water' if p.water_included else None,
+                'Gym' if p.gym else None,
+                'Heating' if p.heating else None,
+                'Hot Tub' if p.hot_tub else None,
+                'A/C' if p.air_conditioning else None,
+                'Parking' if p.free_parking_on_premises else None,
+                'Desk' if p.desk else None,
+                'Hangers' if p.hangers else None,
+                'Closet' if p.closet else None,
+                'Washer' if p.washer else None,
+                'Iron' if p.iron else None
+            ])) or "None"
+
             formatted_line = (
-                "'{title}' in {district}, {city}, {country} — {price}/mo, "
-                "{rooms} rooms, Cancellation: {cancellation}. "
-                "Amenities: {amenities}"
-                "View Listing: https://www.nomadroof.com/properties/{url}"
-            ).format(
-                title=p.post_title,
-                district=district,
-                city=city,
-                country=country,
-                price=p.property_price_per_month or p.property_price or "N/A",
-                rooms=p.property_bedrooms or "N/A",
-                cancellation=p.cancellation_policy or "N/A",
-     
-                available_days=p.property_available_days or "N/A",
-                
-                amenities=", ".join(filter(None, [
+                f"Title: {p.post_title}\n"
+                f"Location: {district}, {city}, {country}\n"
+                f"Price: {p.property_price_per_month or p.property_price or 'N/A'}/mo\n"
+                f"Rooms: {p.property_bedrooms or 'N/A'}\n"
+                f"Cancellation: {p.cancellation_policy or 'N/A'}\n"
+                f"Amenities: {amenities}\n"
+                f"View Listing: https://www.nomadroof.com/properties/{p.half_property_url or ''}\n"
+            )
+
+            formatted_lines.append(formatted_line)
+
+        formatted = "\n".join(formatted_lines)
+
+
+        formatted_props = []
+        for p in properties:
+            formatted_props.append({
+                "title": p.post_title,
+                "location": {
+                    "district": (p.property_district or "").strip().title(),
+                    "city": (p.property_state or "").strip().title() or "Lima",
+                    "country": (p.property_country or "").strip().title() or "Peru"
+                },
+                "price": float(p.property_price_per_month or p.property_price or 0),
+                "rooms": int(p.property_bedrooms or 0),
+                "cancellation": p.cancellation_policy or "N/A",
+                "amenities": list(filter(None, [
                     'Electricity' if p.electricity_included else None,
                     'Pool' if p.pool else None,
                     'Water' if p.water_included else None,
@@ -146,48 +216,13 @@ def property_insight(request: InsightRequest):
                     'Desk' if p.desk else None,
                     'Hangers' if p.hangers else None,
                     'Closet' if p.closet else None,
+                    'Washer' if p.washer else None,
                     'Iron' if p.iron else None
                 ])),
-                url=p.half_property_url or ""
-                
-            )
-            formatted_lines.append(formatted_line)
-
-        formatted = "\n".join(formatted_lines)
-
-
-        formatted_properties = []
-
-        for p in properties[:15]:
-            district = (p.property_district or "").strip().title() or "N/A"
-            city = (p.property_state or "").strip().title() or "Lima"
-            country = (p.property_country or "").strip().title() or "Peru"
-
-            amenities = list(filter(None, [
-                'Electricity' if is_true(p.electricity_included) else None,
-                'Pool' if is_true(p.pool) else None,
-                'Water' if is_true(p.water_included) else None,
-                'Gym' if is_true(p.gym) else None,
-                'Heating' if is_true(p.heating) else None,
-                'Hot Tub' if is_true(p.hot_tub) else None,
-                'A/C' if is_true(p.air_conditioning) else None,
-                'Parking' if is_true(p.free_parking_on_premises) else None,
-                'Desk' if is_true(p.desk) else None,
-                'Hangers' if is_true(p.hangers) else None,
-                'Closet' if is_true(p.closet) else None,
-                'Iron' if is_true(p.iron) else None
-            ]))
-
-            formatted_properties.append({
-                "title": p.post_title or "N/A",
-                "location": f"{district}, {city}, {country}",
-                "price": p.property_price_per_month or p.property_price or "N/A",
-                "rooms": p.property_bedrooms or "N/A",
-                "cancellation_policy": p.cancellation_policy or "N/A",
-    
-                "amenities": amenities,
-                "view_link": f"https://www.nomadroof.com/properties/{p.half_property_url or ''}"
+                "url": f"https://www.nomadroof.com/properties/{p.half_property_url or ''}"
             })
+
+        formatted_json = json.dumps(formatted_props, indent=2)
 
         # messages = [
         #     {
@@ -211,84 +246,45 @@ def property_insight(request: InsightRequest):
         #         )
         #     }
         # ]
+        #print(formatted_json)
 
-  
+        messages = [
+        {
+            "role": "system",
+            "content": (
+                    "You are a helpful real estate assistant. Only answer questions related to Nomadroof Properties listings, housing, amenities, neighborhoods, or nearby universities. "
+                    "If the user asks a question unrelated to real estate (e.g., math, general trivia), politely respond that you're only able to assist with Nomadroof network properties questions. "
+                    "Only use the provided JSON data. Do not assume or fabricate information.Do not mention the data source or data format (like JSON) in your response. "
+                    "Use the title and view listing link to reference properties. "
 
-        # messages = [
-        #     {
-        #         "role": "system",
-        #         "content": (
-        #             "You are a real estate analyst. NEVER mention or infer personal data, exact addresses, coordinates, or individual identities. "
-        #             "Only give generalized, anonymized insights using cities, districts, prices, and amenities."
-        #         )
-        #     },
-        #     {
-        #         "role": "user",
-        #         "content": (
-        #             f"Below is a JSON array of standardized property listings.\n\n"
-        #             f"{json.dumps(formatted_properties, indent=2)}\n\n"
-        #             f"Nearby university info: {near_summary}\n\n"
-        #             f"IMPORTANT:\n"
-        #             "- If the question requires you to return a list of properties matching criteria (e.g. listings with pools or gyms), "
-        #             "then reply ONLY with a valid JSON array of objects with keys:\n"
-        #             "  title, location, price, rooms, cancellation_policy, amenities, view_link\n"
-        #             "- Include all matching properties; if none match, return an empty array.\n"
-        #             "- For other questions, answer in plain text.\n\n"
-        #             f"Now answer this question based ONLY on the data above:\n\n{question}"
-        #         )
-        #     }
-        # ]
+                    "Important: Be strict and logical in applying numeric filters. "
+                    "If a user says 'under X', only return properties with price < X. "
+                    "If a user says 'X or less', return properties with price <= X. "
+                    "For example, if the user says 'under 400', exclude properties priced at 400 or more. "
+                    "Do not round, approximate, or loosely interpret numeric values."
 
-            messages = [
-            {
-                "role": "system",
-                "content": (
-                    "You are a real estate analyst. NEVER mention or infer personal data, exact addresses, coordinates, or individual identities. "
-                    "Only give generalized, anonymized insights using cities, districts, prices, and amenities."
+                    "**If the user's question is a filter-based query** (e.g., price under a certain amount, must include specific amenities, must be near a university), "
+                    "**respond with a JSON array of matching property objects**, each with: `title`, `location`, `price`, `rooms`, `amenities`, and `url`. "
+                    "Otherwise, respond with a regular natural language answer using the property data to support your response."
+
+                  
                 )
             },
-            {
-                "role": "user",
-                "content": (
-                    f"Below is a JSON array of standardized property listings.\n\n"
-                    f"{json.dumps(formatted_properties, indent=2)}\n\n"
-                    f"Nearby university info: {near_summary}\n\n"
-                    f"IMPORTANT:\n"
-                    "- If the question requires you to return a list of properties matching criteria (e.g. listings with pools or gyms), "
-                    "then reply ONLY with a valid JSON array of objects with keys:\n"
-                    "  title, location, price, rooms, cancellation_policy, amenities, view_link\n"
-                    "- Include all matching properties; if none match, return an empty array.\n"
-                    "- For other questions, answer in plain text.\n\n"
-                    f"Now answer this question based ONLY on the data above:\n\n{question}"
-                )
-            }
-        ]
+        {
+            "role": "user",
+            "content": (
+                f"Here is a list of property listings in JSON format:\n\n"
+                f"{formatted_json}\n\n"
+                f"Nearby university info: {near_summary}\n\n"
+                f"Now, based only on this data, answer the following question:\n\n{question}"
+            )
+        }
+      ]
 
-        #print(formatted_properties)
+        #print(formatted)
         answer = ask_gpt(messages)
         #return {"answer": answer}
-        #print(answer)
-        print(json.dumps(answer, indent=2, ensure_ascii=False))
-        # Step 2: Try to parse the response as a list
-        try:
-            filtered_properties = json.loads(answer)
-            print(filtered_properties)
-            if isinstance(filtered_properties, list):
-                return {
-                    "answer": "Filtered property list based on user query.",
-                    "filtered_properties": filtered_properties,
-                    "university_proximity": {
-                        uni: [dict(
-                            post_title=p.post_title,
-                            distance_km=dist
-                        ) for p, dist in prop_list]
-                        for uni, prop_list in universities_proximity.items()
-                    }
-                }
-        except json.JSONDecodeError:
-            pass  # Not a JSON array — fallback to text response
-
-        # Step 3: Fallback plain answer
+      
         return {
             "answer": answer,
             "university_proximity": {

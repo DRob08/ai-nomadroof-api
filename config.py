@@ -16,6 +16,13 @@ class Settings(BaseSettings):
     DB_USER: str = os.getenv("DB_USER")
     DB_PASSWORD: str = os.getenv("DB_PASSWORD")
     DB_NAME: str = os.getenv("DB_NAME")
+    
+    # SMTP (now with proper type annotations)
+    SMTP_SERVER: str = os.getenv("SMTP_SERVER")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USERNAME: str = os.getenv("SMTP_USERNAME")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD")
+    ADMIN_EMAIL: str = os.getenv("ADMIN_EMAIL")
 
     # Optional settings
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")

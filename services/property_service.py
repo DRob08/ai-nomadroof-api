@@ -225,6 +225,7 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
         CASE WHEN hangers.meta_value = '1' THEN TRUE ELSE FALSE END AS hangers,
         CASE WHEN closet.meta_value = '1' THEN TRUE ELSE FALSE END AS closet,
         CASE WHEN iron.meta_value = '1' THEN TRUE ELSE FALSE END AS iron,
+        CASE WHEN washer.meta_value = '1' THEN TRUE ELSE FALSE END AS washer,
         country.meta_value AS property_country,
         guest.meta_value AS guest_no,
         price.meta_value AS property_price,
@@ -274,6 +275,7 @@ def get_available_properties(filters: dict = {}) -> List[PropertyModel]:
     LEFT JOIN wp_postmeta hangers ON p.ID = hangers.post_id AND hangers.meta_key = 'hangers'
     LEFT JOIN wp_postmeta closet ON p.ID = closet.post_id AND closet.meta_key = 'closet'
     LEFT JOIN wp_postmeta iron ON p.ID = iron.post_id AND iron.meta_key = 'iron'
+    LEFT JOIN wp_postmeta washer ON p.ID = washer.post_id AND washer.meta_key = 'washer'
     INNER JOIN wp_postmeta country ON p.ID = country.post_id AND country.meta_key = 'property_country'
     INNER JOIN wp_postmeta guest ON p.ID = guest.post_id AND guest.meta_key = 'guest_no'
     INNER JOIN wp_postmeta price ON p.ID = price.post_id AND price.meta_key = 'property_price'
@@ -379,6 +381,7 @@ def get_exclusive_properties() -> List[PropertyModel]:
         CASE WHEN hangers.meta_value = '1' THEN TRUE ELSE FALSE END AS hangers,
         CASE WHEN closet.meta_value = '1' THEN TRUE ELSE FALSE END AS closet,
         CASE WHEN iron.meta_value = '1' THEN TRUE ELSE FALSE END AS iron,
+        CASE WHEN washer.meta_value = '1' THEN TRUE ELSE FALSE END AS washer,
         country.meta_value AS property_country,
         guest.meta_value AS guest_no,
         price.meta_value AS property_price,
@@ -428,6 +431,7 @@ def get_exclusive_properties() -> List[PropertyModel]:
     LEFT JOIN wp_postmeta hangers ON p.ID = hangers.post_id AND hangers.meta_key = 'hangers'
     LEFT JOIN wp_postmeta closet ON p.ID = closet.post_id AND closet.meta_key = 'closet'
     LEFT JOIN wp_postmeta iron ON p.ID = iron.post_id AND iron.meta_key = 'iron'
+    LEFT JOIN wp_postmeta washer ON p.ID = washer.post_id AND washer.meta_key = 'washer'
     INNER JOIN wp_postmeta country ON p.ID = country.post_id AND country.meta_key = 'property_country'
     INNER JOIN wp_postmeta guest ON p.ID = guest.post_id AND guest.meta_key = 'guest_no'
     INNER JOIN wp_postmeta price ON p.ID = price.post_id AND price.meta_key = 'property_price'
