@@ -18,8 +18,13 @@ app.add_middleware(
 )
 
 app.include_router(bookings.router, prefix="/api")
+app.include_router(contact.router, prefix="/api")
 app.include_router(agent.router, prefix="/api/agent")
 app.include_router(property.router, prefix="/api/property")
-app.include_router(contact.router, prefix="/api")
+
 
 logging.basicConfig(level=logging.INFO)
+
+
+for route in app.routes:
+    print(f"{route.path} - {route.methods}")
