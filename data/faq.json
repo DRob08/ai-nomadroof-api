@@ -50,10 +50,6 @@
         "answer": "It is very important to add your phone number and a correct email address in “My Profile” settings, because we will contact you to start with the verification process."
       },
       {
-        "question": "What is Nomadroof?",
-        "answer": "Nomadroof is an online platform for students, travellers, professionals, or expats looking for mid-to long-term housing oversees or in different cities of their countries. Our goal is to excel and make easier all the steps of finding and booking a place to live, all this conveniently made online without wasting time."
-      },
-      {
         "question": "How can I create an account?",
         "answer": "Click on the + Sign Up tab located in the upper right side of the website. Sign up via Facebook, Gmail or create a username by providing your email address. If you choose the last option, you will be emailed a temporary password to access your new account."
       },
@@ -120,6 +116,7 @@
           "If your booking request expires, because Landlord has not replied to your request within the 48 hours period, then your booking request gets canceled. Either way, we have many other amazing properties’ listings you can check out. We recommend you to message as many Landlords as you need so you end up getting the right place to move in."
         ]
       },
+      
       {
         "question": "What are the payment methods?",
         "answer": [
@@ -170,6 +167,45 @@
       {
         "question": "What is the refund process timeline?",
         "answer": "Once your refund is approved, the process usually takes 5–10 business days to reflect in your original method of payment, depending on your bank or payment provider."
+      },
+      {
+        "question": "Can I contact the landlord?",
+        "answer": "You can only message a Host once a booking is confirmed."
+      },
+      {
+        "question": "How do I reserve my flat?",
+        "answer": "To reserve a flat, start by selecting your dates, location, and budget. Once you find a match, proceed to confirm your booking."
+      },
+      {
+        "question": "How long does it take to get a response from my booking request?",
+        "answer": "Hosts have 48 business hours to respond. If they decline or don’t reply within that timeframe, you’ll be notified by email."
+      },
+      {
+        "question": "What happens when the Host accepts my booking request?",
+        "answer": "Once the host accepts, you’ll receive an invoice. Go to your Dashboard → My Reservations, click “Invoice Created‑Check & Pay” to review and complete payment."
+      },
+      {
+        "question": "What happens if my booking request is declined or expires?",
+        "answer": [
+          "If a landlord declines, you’ll be notified right away by email.",
+          "If your request expires (no reply within 48 hours), it gets canceled. You can then explore other properties."
+        ]
+      },
+      {
+        "question": "How can I create an account?",
+        "answer": "Click on the + Sign Up tab located in the upper right side of the website. Sign up via Facebook, Gmail or create a username by providing your email address. If you choose the last option, you will be emailed a temporary password to access your new account."
+      },
+      {
+        "question": "How do I update my profile and other settings?",
+        "answer": "To update your profile and other settings you need to log in to your account and go to your “Dashboard”."
+      },
+      {
+        "question": "What information in my profile is public?",
+        "answer": "Only the information that you include in your profile is public. Your “Personal information” will only be visible to nomadroof. Once a booking and payment is confirmed, we will share your name, email address and phone number with the tenant."
+      },
+      {
+        "question": "How do I change my password?",
+        "answer": "Go to your Dashboard and click on “Mi Profile” settings. Scroll down and you will be able to see the options to change your password."
       }
   ]
   

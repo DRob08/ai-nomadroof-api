@@ -8,7 +8,7 @@ def load_faq():
     with open(FAQ_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def find_answer_from_faq(question: str, cutoff: float = 70.0):  # cutoff in percent
+def find_answer_from_faq(question: str, cutoff: float = 55.0):  # cutoff in percent
     faqs = load_faq()
     questions = [faq['question'] for faq in faqs]
 

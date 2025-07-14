@@ -1,5 +1,5 @@
 # routers/agent.py
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from routers.bookings import get_bookings
 from services.ai_service import ask_gpt  # 👈 new import
 from services.property_service import get_available_properties  
@@ -397,5 +397,22 @@ def available_properties_insights():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@router.get("/faq-match")
+def faq_match_endpoint(q: str = Query(..., description="User's question")):
+    answer = find_answer_from_faq(q)
+
+    if answer:
+        return {
+            "answer": answer
+        }
+    else:
+        return {
+            "matched_question": None,
+            "answer": "Sorry, I couldn’t find an answer. Would you like help from a human?",
+        }
+
+
 
 
