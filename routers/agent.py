@@ -95,7 +95,7 @@ def property_insight(request: InsightRequest):
             return {"answer": "Your question contains sensitive content and cannot be processed."}
         
          # Try to answer using the FAQ first
-        faq_answer = find_answer_from_faq(question)
+        faq_answer = find_answer_from_faq(question, cutoff=75)
         if faq_answer:
             return {"answer": faq_answer}
 
