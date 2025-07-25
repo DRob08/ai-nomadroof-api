@@ -1,6 +1,6 @@
 # main.py
 from fastapi import FastAPI
-from routers import bookings, agent, property, contact
+from routers import bookings, agent, property, contact, receipts
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
@@ -21,6 +21,7 @@ app.include_router(bookings.router, prefix="/api")
 app.include_router(contact.router, prefix="/api")
 app.include_router(agent.router, prefix="/api/agent")
 app.include_router(property.router, prefix="/api/property")
+app.include_router(receipts.router, prefix="/api")
 
 
 logging.basicConfig(level=logging.INFO)
