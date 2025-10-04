@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Nomadroof Receipt</title>
+  <style>
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      margin: 0;
+      padding: 40px;
+      color: #30373b;
+      background-color: #ffffff;
+    }
+
+    .header, .footer {
+      text-align: center;
+      background-color: #f5694b;
+      color: #ffffff;
+      padding: 10px;
+    }
+
+    .header img {
+      width: 180px;
+      margin: 10px auto;
+    }
+
+    .title-section {
+      text-align: center;
+      margin: 30px 0 20px;
+    }
+
+    .title-section h1 {
+      color: #f5694b;
+      font-size: 24px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .info-section, .item-table {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .info-label {
+      color: #f5694b;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th {
+      text-align: left;
+      background-color: #f5694b;
+      color: white;
+      padding: 10px;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: right;
+      color: #f5694b;
+      margin-top: 20px;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: #848789;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="http://www.nomadroof.com/wp-content/uploads/2016/06/LogoIcon.png" alt="Nomadroof Logo">
+    <div>STUDENT HOUSING PLATFORM</div>
+  </div>
+
+  <div class="title-section">
+    <h1>Thank you for booking with us!</h1>
+    <div>Review your invoice below</div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-row">
+      <span class="info-label">Receipt #:</span>
+      <span>{{ receipt.booking_id }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Receipt Date:</span>
+      <span>{{ receipt.invoice_date }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Customer Name:</span>
+      <span>{{ receipt.guest_full_name }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Property:</span>
+      <span>{{ receipt.property_title }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Address:</span>
+      <span>{{ receipt.property_address }}</span>
+    </div>
+  </div>
+
+  <table class="item-table">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th style="text-align:right">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>First Month's Rent</td>
+        <td>1</td>
+        <td style="text-align:right">${{ '%.2f'|format(receipt.monthly_fee) }}</td>
+      </tr>
+      <tr>
+        <td>Service Fee</td>
+        <td>1</td>
+        <td style="text-align:right">${{ '%.2f'|format(receipt.service_fee) }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="total">
+    Total: ${{ '%.2f'|format(receipt.total_paid) }}
+  </div>
+
+  <div class="footer-text">
+    © 2025 Nomadroof. All Rights Reserved.<br>
+    <a href="https://www.nomadroof.com/privacy/">Privacy Statement</a> |
+    <a href="https://www.nomadroof.com/terms-and-conditions/">Terms</a> |
+    <a href="https://www.nomadroof.com/faq/">FAQ</a>
+  </div>
+</body>
+</html>
