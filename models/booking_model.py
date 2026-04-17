@@ -28,6 +28,10 @@ class BookingmModel(BaseModel):
     # Property info (can be null if property doesn't exist)
     property_id: Optional[int] = None
     property_name: Optional[str] = None
+    property_address: Optional[str] = None
+
+    # Confirmed booking extras (only populated when booking_status = 'confirmed')
+    owner_phone: Optional[str] = None
 
     class Config:
         orm_mode = True

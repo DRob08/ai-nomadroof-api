@@ -24,7 +24,9 @@ def get_bookings():
         m5.meta_value as property_id, 
         m6.meta_value as booking_invoice_no,
         uown.user_nicename as owneralias,
-        b.post_title as property_name
+        b.post_title as property_name,
+        prop_addr.meta_value as property_address,
+        CASE WHEN m1.meta_value = 'confirmed' THEN owner_mobile.meta_value ELSE NULL END as owner_phone
         FROM wp_posts 
         INNER JOIN wp_postmeta m1 ON ( wp_posts.ID = m1.post_id )
         INNER JOIN wp_postmeta m2 ON ( wp_posts.ID = m2.post_id )
@@ -36,6 +38,8 @@ def get_bookings():
         INNER JOIN wp_postmeta m5 ON ( wp_posts.ID = m5.post_id )
         INNER JOIN wp_posts b ON ( m5.meta_value = b.ID )
         LEFT JOIN wp_postmeta m6 ON ( wp_posts.ID = m6.post_id AND m6.meta_key = 'booking_invoice_no' )
+        LEFT JOIN wp_postmeta prop_addr ON ( b.ID = prop_addr.post_id AND prop_addr.meta_key = 'property_address' )
+        LEFT JOIN wp_usermeta owner_mobile ON ( m3.meta_value = owner_mobile.user_id AND owner_mobile.meta_key = 'mobile' )
         WHERE wp_posts.post_type = 'wpestate_booking'
         AND wp_posts.post_status = 'publish'
         AND ( m1.meta_key = 'booking_status' AND m1.meta_value IN ('pending', 'waiting', 'confirmed', 'canceled') )
@@ -73,7 +77,9 @@ def get_bookings_by_email(email: str = Query(..., description="Filter bookings b
         m5.meta_value as property_id, 
         m6.meta_value as booking_invoice_no,
         uown.user_nicename as owneralias,
-        b.post_title as property_name
+        b.post_title as property_name,
+        prop_addr.meta_value as property_address,
+        CASE WHEN m1.meta_value = 'confirmed' THEN owner_mobile.meta_value ELSE NULL END as owner_phone
         FROM wp_posts 
         INNER JOIN wp_postmeta m1 ON ( wp_posts.ID = m1.post_id )
         INNER JOIN wp_postmeta m2 ON ( wp_posts.ID = m2.post_id )
@@ -85,6 +91,8 @@ def get_bookings_by_email(email: str = Query(..., description="Filter bookings b
         INNER JOIN wp_postmeta m5 ON ( wp_posts.ID = m5.post_id )
         INNER JOIN wp_posts b ON ( m5.meta_value = b.ID )
         LEFT JOIN wp_postmeta m6 ON ( wp_posts.ID = m6.post_id AND m6.meta_key = 'booking_invoice_no' )
+        LEFT JOIN wp_postmeta prop_addr ON ( b.ID = prop_addr.post_id AND prop_addr.meta_key = 'property_address' )
+        LEFT JOIN wp_usermeta owner_mobile ON ( m3.meta_value = owner_mobile.user_id AND owner_mobile.meta_key = 'mobile' )
         WHERE wp_posts.post_type = 'wpestate_booking'
         AND wp_posts.post_status = 'publish'
         AND ( m1.meta_key = 'booking_status' AND m1.meta_value IN ('pending', 'waiting', 'confirmed', 'canceled') )
