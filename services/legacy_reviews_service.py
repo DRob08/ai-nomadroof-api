@@ -1,15 +1,9 @@
-
-
 from services.db_service import fetch_all
 from datetime import datetime
+import json
 
 
 def format_author_name(full_name: str) -> str:
-    """
-    Formats reviewer name for display.
-    "John Smith" -> "John S."
-    "Maria"      -> "Maria"
-    """
     if not full_name:
         return "Anonymous"
     parts = full_name.strip().split()
@@ -19,10 +13,6 @@ def format_author_name(full_name: str) -> str:
 
 
 def format_review_date(date_val) -> str:
-    """
-    Formats comment_date for display.
-    datetime obj or string -> "March 2023"
-    """
     try:
         if isinstance(date_val, str):
             date_val = datetime.strptime(date_val, "%Y-%m-%d %H:%M:%S")
@@ -31,16 +21,26 @@ def format_review_date(date_val) -> str:
         return str(date_val)
 
 
-def get_legacy_reviews(property_name: str) -> dict:
-    """
-    Given a property name from the new platform,
-    fuzzy-matches against old WP post_titles to find all
-    associated rooms, then retrieves all approved reviews.
-    """
+def parse_rating(raw: str):
+    if not raw:
+        return None, None
+    try:
+        data = json.loads(raw)
+        overall = int(data.get("rating")) if data.get("rating") is not None else None
+        breakdown = {
+            "accuracy": data.get("accuracy"),
+            "communication": data.get("communication"),
+            "cleanliness": data.get("cleanliness"),
+            "location": data.get("location"),
+            "check_in": data.get("check_in"),
+            "value": data.get("value"),
+        }
+        return overall, breakdown
+    except Exception:
+        return None, None
 
-    # --------------------------------------------------
-    # STEP 1: Find all matching WP room/property post IDs
-    # --------------------------------------------------
+
+def get_legacy_reviews(property_name: str) -> dict:
     match_query = """
         SELECT ID, post_title
         FROM wp_posts
@@ -60,16 +60,10 @@ def get_legacy_reviews(property_name: str) -> dict:
             "status": "no_match"
         }
 
-    # Extract all matched post IDs
     post_ids = [row["ID"] for row in matched_posts]
     matched_room_titles = [row["post_title"] for row in matched_posts]
-
-    # Build IN clause placeholders safely e.g. %s, %s, %s
     placeholders = ", ".join(["%s"] * len(post_ids))
 
-    # --------------------------------------------------
-    # STEP 2: Fetch all approved reviews for those posts
-    # --------------------------------------------------
     reviews_query = f"""
         SELECT
             c.comment_ID,
@@ -79,8 +73,7 @@ def get_legacy_reviews(property_name: str) -> dict:
             p.post_title AS room_title,
             cm.meta_value AS rating
         FROM wp_comments c
-        INNER JOIN wp_posts p
-            ON c.comment_post_ID = p.ID
+        INNER JOIN wp_posts p ON c.comment_post_ID = p.ID
         LEFT JOIN wp_commentmeta cm
             ON cm.comment_id = c.comment_ID
             AND cm.meta_key = 'review_stars'
@@ -88,6 +81,7 @@ def get_legacy_reviews(property_name: str) -> dict:
             c.comment_post_ID IN ({placeholders})
             AND c.comment_approved = '1'
             AND p.post_type = 'estate_property'
+            AND c.comment_content != ''
         ORDER BY c.comment_date DESC
     """
     raw_reviews = fetch_all(reviews_query, params=tuple(post_ids))
@@ -102,25 +96,19 @@ def get_legacy_reviews(property_name: str) -> dict:
             "status": "no_reviews"
         }
 
-    # --------------------------------------------------
-    # STEP 3: Shape reviews for response
-    # --------------------------------------------------
     shaped_reviews = []
     ratings = []
 
     for row in raw_reviews:
-        rating = None
-        if row["rating"] is not None:
-            try:
-                rating = int(float(row["rating"]))
-                ratings.append(rating)
-            except (ValueError, TypeError):
-                pass
+        overall, breakdown = parse_rating(row["rating"])
+        if overall is not None:
+            ratings.append(overall)
 
         shaped_reviews.append({
             "author": format_author_name(row["comment_author"]),
             "date": format_review_date(row["comment_date"]),
-            "rating": rating,
+            "rating": overall,
+            "rating_breakdown": breakdown,
             "content": row["comment_content"],
         })
 
@@ -128,7 +116,7 @@ def get_legacy_reviews(property_name: str) -> dict:
 
     return {
         "property_searched": property_name,
-        "matched_rooms": matched_room_titles,   # useful for debugging on your end
+        "matched_rooms": matched_room_titles,
         "total_reviews": len(shaped_reviews),
         "average_rating": average_rating,
         "reviews": shaped_reviews,
