@@ -12,13 +12,13 @@ def format_author_name(full_name: str) -> str:
     return f"{parts[0]} {parts[1][0]}."
 
 
-def format_review_date(date_val) -> str:
+def format_review_date(date_val):
     try:
         if isinstance(date_val, str):
             date_val = datetime.strptime(date_val, "%Y-%m-%d %H:%M:%S")
-        return date_val.strftime("%B %Y")
+        return date_val.strftime("%B %Y"), date_val.isoformat()
     except Exception:
-        return str(date_val)
+        return str(date_val), str(date_val)
 
 
 def parse_rating(raw: str):
@@ -66,12 +66,12 @@ def get_legacy_reviews(property_name: str) -> dict:
 
     reviews_query = f"""
         SELECT
-            c.comment_ID,
+            MIN(c.comment_ID) as comment_ID,
             c.comment_author,
-            c.comment_date,
-            c.comment_content,
+            DATE(MIN(c.comment_date)) as comment_date,
+            MIN(c.comment_content) as comment_content,
             p.post_title AS room_title,
-            cm.meta_value AS rating
+            MAX(cm.meta_value) AS rating
         FROM wp_comments c
         INNER JOIN wp_posts p ON c.comment_post_ID = p.ID
         LEFT JOIN wp_commentmeta cm
@@ -82,7 +82,12 @@ def get_legacy_reviews(property_name: str) -> dict:
             AND c.comment_approved = '1'
             AND p.post_type = 'estate_property'
             AND c.comment_content != ''
-        ORDER BY c.comment_date DESC
+        GROUP BY
+            c.comment_author,
+            DATE(c.comment_date),
+            c.comment_post_ID,
+            p.post_title
+        ORDER BY comment_date DESC
     """
     raw_reviews = fetch_all(reviews_query, params=tuple(post_ids))
 
@@ -96,6 +101,15 @@ def get_legacy_reviews(property_name: str) -> dict:
             "status": "no_reviews"
         }
 
+    seen = set()
+    deduped_reviews = []
+    for row in raw_reviews:
+        key = (row["comment_author"], str(row["comment_date"]))
+        if key not in seen:
+            seen.add(key)
+            deduped_reviews.append(row)
+    raw_reviews = deduped_reviews
+
     shaped_reviews = []
     ratings = []
 
@@ -104,9 +118,12 @@ def get_legacy_reviews(property_name: str) -> dict:
         if overall is not None:
             ratings.append(overall)
 
+        date_formatted, date_raw = format_review_date(row["comment_date"])
+
         shaped_reviews.append({
             "author": format_author_name(row["comment_author"]),
-            "date": format_review_date(row["comment_date"]),
+            "date": date_formatted,
+            "date_raw": date_raw,
             "rating": overall,
             "rating_breakdown": breakdown,
             "content": row["comment_content"],
