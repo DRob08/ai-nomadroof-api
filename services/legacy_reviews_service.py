@@ -40,7 +40,10 @@ def parse_rating(raw: str):
         return None, None
 
 
-def get_legacy_reviews(property_name: str) -> dict:
+def find_matching_posts(property_name: str):
+    """Match old room posts by title. If the full name finds nothing, drop
+    trailing words one at a time (keeping at least 2) so a name like
+    'Casa Pisco in' still matches 'Casa Pisco Room 2 in ...'."""
     match_query = """
         SELECT ID, post_title
         FROM wp_posts
@@ -48,7 +51,18 @@ def get_legacy_reviews(property_name: str) -> dict:
           AND post_status = 'publish'
           AND post_title LIKE %s
     """
-    matched_posts = fetch_all(match_query, params=(f"%{property_name}%",))
+    words = property_name.split()
+    min_words = min(2, len(words))
+    while words and len(words) >= min_words:
+        rows = fetch_all(match_query, params=(f"%{' '.join(words)}%",))
+        if rows:
+            return rows
+        words.pop()
+    return []
+
+
+def get_legacy_reviews(property_name: str) -> dict:
+    matched_posts = find_matching_posts(property_name)
 
     if not matched_posts:
         return {
