@@ -26,7 +26,7 @@ def parse_rating(raw: str):
         return None, None
     try:
         data = json.loads(raw)
-        overall = int(data.get("rating")) if data.get("rating") is not None else None
+        overall = float(data.get("rating")) if data.get("rating") is not None else None
         breakdown = {
             "accuracy": data.get("accuracy"),
             "communication": data.get("communication"),
